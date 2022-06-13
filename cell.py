@@ -1,6 +1,8 @@
+from tkinter import Button, Label
 import random
-from tkinter import *
 import settings
+import ctypes
+import sys
 
 class Cell:
     all = []
@@ -9,6 +11,7 @@ class Cell:
     def __init__(self,x,y, is_mine=False):
         self.is_mine = is_mine
         self.is_opened = False
+        self.is_mine_candidate = False
         self.cell_btn_object = None
         self.x = x
         self.y = y
@@ -48,6 +51,9 @@ class Cell:
                 for cell_obj in self.surrounded_cells:
                     cell_obj.show_cell()
             self.show_cell()
+        #cancels left and right click event if cell is already opened
+        self.cell_btn_object.unbind('<Button-1>')
+        self.cell_btn_object.unbind('<Button-3>')
 
     def get_cell_by_axis(self, x,y):
         for cell in Cell.all:
@@ -88,16 +94,30 @@ class Cell:
                 Cell.cell_count_label_object.configure(
                     text=f"Cells Left: {Cell.cell_count}"
                 )
+                #if this cell is a mine candidate, then for safety, configure the background color to SystemButtonFace
+                self.cell_btn_object.configure(
+                    bg='SystemButtonFace'
+                )
         # Marks the cell as opened 
         self.is_opened = True    
 
     def show_mine(self):
-        #Interrupts the game and displays a message that the player lost
-        self.cell_btn_object.configure(bg='red')        
+        self.cell_btn_object.configure(bg='red') 
+        ctypes.windll.user32.MessageBoxW(0, 'You clicked on a mine', 'Game Over', 0) 
+        sys.exit()       
 
     def right_click_actions(self, event):
-        print(event)
-        print("I am right clicked!")    
+        if not self.is_mine_candidate: 
+            self.cell_btn_object.configure(
+                bg='orange'
+            )
+            self.is_mine_candidate = True
+        else:
+            self.cell_btn_object.configure(
+                bg='SystemButtonFace'
+            )  
+            self.is_mine_candidate = False
+          
 
     @staticmethod  
     def randomize_mines():  
