@@ -12,7 +12,7 @@ root.resizable(False, False)
 
 top_frame = Frame(
     root,
-    bg="black",  
+    bg="black",
     width=settings.WIDTH,
     height=utils.height_prct(25),
 )
@@ -20,7 +20,7 @@ top_frame.place(x=0, y=0)
 
 left_frame = Frame(
     root,
-    bg="black",  
+    bg="black",
     width=utils.width_prct(25),
     height=utils.height_prct(75),
 )
@@ -40,6 +40,10 @@ for x in range(settings.GRID_SIZE):
         c = Cell(x, y)
         c.create_btn_object(center_frame)
         c.cell_btn_object.grid(column=x, row=y)
+
+# Calls label from cell class
+Cell.create_cell_count_label(left_frame)
+Cell.cell_count_label_object.place(x=0, y=0)
 
 Cell.randomize_mines()
 
